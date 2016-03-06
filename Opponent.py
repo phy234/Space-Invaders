@@ -14,7 +14,6 @@ class Opponent:
         self.maxX = maxX
         self.maxY = maxY
         self.downwards = 0
-        self.counter = 0
         self.phase = 0    # Phase 0: move left, Phase 1: move down, Phase 2: move right
     
     def move(self, by = 1):
@@ -27,7 +26,6 @@ class Opponent:
             self.y += by
             self.downwards += by
             if (self.downwards > 100):
-                self.counter += 1
                 self.phase = 2
         elif (self.phase == 2):
             self.x += by
@@ -38,11 +36,16 @@ class Opponent:
             self.y += by
             self.downwards += by
             if (self.downwards > 100):
-                self.counter += 1
                 self.phase = 0
+
+    def isHitByBullet(self, b):
+        if (b.x > self.x-12 and b.x < self.x+38 and b.y > self.y-6 and b.y < self.y+63):
+            return True
+        else:
+            return False
     
     def isOffSreen(self):
-        if self.counter > 8:
+        if self.y > self.maxY:
             return True
         else:
             return False
