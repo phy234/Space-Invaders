@@ -27,21 +27,26 @@ def drawGameScreen(screen, rocket, bullets, opponents, stars, score):
         o.draw(screen)
     rocket.draw(screen)
     score.draw(screen)
-    
+            
 def game():
     size = (900, 910)
     screen = initialize(size)
-    rocket = Rocket(size[0]/2, size[1]-100)
-    bullets = []
-    opponents = [Opponent((i+1)*125,25,size[0],size[1]) for i in range(math.floor(size[0]/125))]
-    stars = [Star(randrange(size[0]), randrange(size[1]), size[1]) for i in range(200)]
-    score = Score(size[1])
+
     rocketYSpeed = 3
     rocketXSpeed = 3
-    opponentSpeed = 6
+    opponentSpeed = 3
+    opponentLives = 5
     done = False
     bulletSpeed = 5
     noOfMovesSinceLastOpponent = 0
+
+    rocket = Rocket(size[0]/2, size[1]-100)
+    bullets = []
+    opponents = [Opponent((i+1)*80,25,size[0],size[1],opponentLives) for i in range(math.floor(size[0]/80),0,10)]
+    stars = [Star(randrange(size[0]), randrange(size[1]), size[1]) for i in range(200)]
+    score = Score(size[1])
+
+
     pygame.display.set_caption("Spiel")
 
     # =================
@@ -82,9 +87,10 @@ def game():
                 bullets.remove(b)
             for o in opponents:
                 if (o.isHitByBullet(b)):
-                    opponents.remove(o)
                     bullets.remove(b)
-                    score.addScore()
+                    if (o.isDead()):
+                        opponents.remove(o)
+                        score.addScore()
                     break
             
         for s in stars:
@@ -92,14 +98,13 @@ def game():
 
         for o in opponents:
             o.move(opponentSpeed)
-        
+                            
         noOfMovesSinceLastOpponent += 1
-        if (noOfMovesSinceLastOpponent == 15):
+        if (noOfMovesSinceLastOpponent == 45):
             noOfMovesSinceLastOpponent = 0
-            opponents.append(Opponent(size[0]-25,25,size[0],size[1]))
+            opponents.append(Opponent(size[0]-25,25,size[0],size[1],opponentLives))
         
         # Draw loop
-            
         drawGameScreen(screen, rocket, bullets, opponents, stars, score)
         
         pygame.display.flip()
